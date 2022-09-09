@@ -95,7 +95,7 @@ fi
 tun_iface=$(ip addr show dev tun0 2>/dev/null | grep "inet " | cut -d" " -f6 | awk -F'/' '{print $1}')
 
 if [ -n "$tun_iface" ]; then
-	$tun_iface="-${tun_iface}"	
+	tun_iface="-${tun_iface}"	
 fi	
 
 
