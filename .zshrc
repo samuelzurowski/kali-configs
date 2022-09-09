@@ -92,7 +92,12 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-THEIP=$(ip addr show dev tun0 | grep "inet " | cut -d" " -f6 | awk -F'/' '{print $1}')
+tun_iface=$(ip addr show dev tun0 2>/dev/null | grep "inet " | cut -d" " -f6 | awk -F'/' '{print $1}')
+
+if [ -n "$tun_iface" ]; then
+	$tun_iface="-${tun_iface}"	
+fi	
+
 
 configure_prompt() {
     prompt_symbol=㉿
@@ -100,7 +105,7 @@ configure_prompt() {
     #[ "$EUID" -eq 0 ] && prompt_symbol=💀
     case "$PROMPT_ALTERNATIVE" in
         twoline)
-            PROMPT=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)─}${VIRTUAL_ENV:+($(basename $VIRTUAL_ENV))─}(%B%F{%(#.red.blue)}%n'-$THEIP$prompt_symbol$'%m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
+            PROMPT=$'%F{%(#.blue.green)}┌──${debian_chroot:+($debian_chroot)─}${VIRTUAL_ENV:+($(basename $VIRTUAL_ENV))─}(%B%F{%(#.red.blue)}%n'$tun_iface$prompt_symbol$'%m%b%F{%(#.blue.green)})-[%B%F{reset}%(6~.%-1~/…/%4~.%5~)%b%F{%(#.blue.green)}]\n└─%B%(#.%F{red}#.%F{blue}$)%b%F{reset} '
             # Right-side prompt with exit codes and background processes
             #RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
             ;;
